@@ -19,8 +19,9 @@ export const Tab = ({ tabId }: TabProps) => {
 
   const tabDisplay = useMemo(() => {
     if (isNewTab) return "New Tab";
-    const [firstLine] = text.split("\n");
-    if (!firstLine) return "New Tab";
+    const [firstLineUntrimmed] = text.split("\n");
+    const firstLine = firstLineUntrimmed.trim();
+    if (!firstLine?.length) return "New Tab";
     const displayLength = 25;
     let formatted = firstLine.slice(0, displayLength);
     if (firstLine.length > displayLength) {
