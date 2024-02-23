@@ -14,6 +14,7 @@ export const useFullReset = () => {
   const setDefaultText = useSetAtom(textFamily(DEFAULT_TAB_ID));
 
   return useCallback(() => {
+    localStorage.clear();
     setTabIds(RESET);
     setActiveTabId(RESET);
     setDefaultText("");
