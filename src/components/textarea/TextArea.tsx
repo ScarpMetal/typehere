@@ -1,9 +1,10 @@
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { activeTabIdAtom, textFamily } from "~/atoms";
 import "./TextArea.scss";
 
 export const TextArea = () => {
+  const ref = useRef<HTMLTextAreaElement>(null);
   const activeTabId = useAtomValue(activeTabIdAtom);
   const [text, setText] = useAtom(textFamily(activeTabId));
 
@@ -15,8 +16,13 @@ export const TextArea = () => {
       [setText]
     );
 
+  useEffect(() => {
+    ref.current?.focus();
+  }, [activeTabId]);
+
   return (
     <textarea
+      ref={ref}
       className="main-text-area"
       value={text}
       onChange={handleTextChange}
