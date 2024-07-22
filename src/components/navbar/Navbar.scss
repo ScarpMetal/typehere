@@ -3,15 +3,10 @@
   flex-wrap: wrap;
   align-items: stretch;
   font-size: 1.4em;
-  opacity: 0.2;
+  opacity: 1;
   transition: opacity 0.5s;
   transition-delay: 1s;
-  background-color: #f9f9f9;
-
-  &:hover {
-    opacity: 1;
-    transition-delay: 0s;
-  }
+  background-color: #eeeeee;
 
   @keyframes fade-in {
     from {
@@ -28,7 +23,7 @@
     flex-shrink: 0;
 
     &[data-active="true"] {
-      background-color: #ddd;
+      background-color: #fff;
     }
 
     &[data-new-tab="true"] {
