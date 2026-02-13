@@ -1,0 +1,93 @@
+.confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: light-dark(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.5));
+  animation: confirm-modal-fade-in 0.25s ease-out;
+}
+
+.confirm-modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 20em;
+  max-width: 90vw;
+  padding: 1.25em 1.5em;
+  background-color: light-dark(#fff, #222);
+  color: light-dark(#222, #fff);
+  border: 1px solid light-dark(#ddd, #333);
+  box-shadow: none;
+  animation: confirm-modal-fade-in 0.3s ease-out 0.05s both;
+  font-family: inherit;
+  font-weight: 400;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.confirm-modal-title {
+  margin: 0 0 0.5em;
+  font-size: 1em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.confirm-modal-description {
+  margin: 0 0 1.25em;
+  color: light-dark(#444, #bbb);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  gap: 0.5em;
+  justify-content: flex-end;
+}
+
+.confirm-modal-button {
+  padding: 0.3em 0.6em 0.4em;
+  font-size: 1em;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 400;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+
+  &.confirm-modal-cancel {
+    background-color: light-dark(#eee, #111);
+    color: light-dark(#222, #fff);
+
+    &:hover {
+      background-color: light-dark(#fff, #222);
+    }
+  }
+
+  &.confirm-modal-confirm {
+    background-color: light-dark(#222, #444);
+    color: light-dark(#fff, #eee);
+
+    &:hover {
+      background-color: light-dark(#333, #555);
+    }
+
+    .confirm-modal-content[data-variant="danger"] & {
+      background-color: #8b0000;
+      color: #fff;
+
+      &:hover {
+        background-color: #660000;
+      }
+    }
+  }
+}
+
+@keyframes confirm-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

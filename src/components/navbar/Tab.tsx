@@ -1,7 +1,8 @@
 import { logEvent } from "firebase/analytics";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { activeTabIdAtom, tabIdsAtom, textFamily } from "~/atoms";
+import { ConfirmModal } from "~/components/ConfirmModal/ConfirmModal";
 import { analytics } from "~/firebase";
 import { useFullReset } from "~/useFullReset";
 
@@ -16,6 +17,7 @@ export const Tab = ({ tabId }: TabProps) => {
   const isActive = tabId === activeTabId;
   const text = useAtomValue(textFamily(tabId));
   const isNewTab = !text.length;
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const tabDisplay = useMemo(() => {
     if (isNewTab) return "New Tab";
@@ -34,9 +36,9 @@ export const Tab = ({ tabId }: TabProps) => {
     setActiveTabId(tabId);
   }, [setActiveTabId, tabId]);
 
-  const handleDeleteTab = useCallback(() => {
+  const performDeleteTab = useCallback(() => {
     if (isActive) {
-      const activeTabIndex = tabIds.findIndex((tid) => tabId === tid);
+      const activeTabIndex = tabIds.findIndex((tid) => tid === tabId);
       const nextTabIds = [...tabIds];
       // Remove tab from tab ids array
       nextTabIds.splice(activeTabIndex, 1);
@@ -63,6 +65,14 @@ export const Tab = ({ tabId }: TabProps) => {
     logEvent(analytics, "remove_tab");
   }, [fullReset, isActive, setActiveTabId, setTabIds, tabId, tabIds]);
 
+  const handleDeleteTab = useCallback(() => {
+    if (isNewTab === false) {
+      setConfirmDeleteOpen(true);
+      return;
+    }
+    performDeleteTab();
+  }, [isNewTab, performDeleteTab]);
+
   return (
     <>
       <div className="tab-container">
@@ -83,6 +93,16 @@ export const Tab = ({ tabId }: TabProps) => {
           x
         </button>
       </div>
+      <ConfirmModal
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        title="Delete this note?"
+        description="Are you sure you want to delete this note? Your content cannot be recovered."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={performDeleteTab}
+        variant="danger"
+      />
     </>
   );
 };
