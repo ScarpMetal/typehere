@@ -3,8 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color: #242424;
-  background-color: #fff;
+  color-scheme: light dark;
+  color: light-dark(#222, #fff);
+  background-color: light-dark(#fff, #222);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,4 +35,10 @@ button {
   border: none;
   border-radius: 0;
   padding: 0;
+}
+
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
 }

@@ -1,18 +1,18 @@
+import { logEvent } from "firebase/analytics";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useMemo, useState } from "react";
-import { activeTabIdAtom, textFamily } from "~/atoms";
-import { TabContextMenu } from "./TabContextMenu";
+import { useCallback, useMemo } from "react";
+import { activeTabIdAtom, tabIdsAtom, textFamily } from "~/atoms";
+import { analytics } from "~/firebase";
+import { useFullReset } from "~/useFullReset";
 
 export interface TabProps {
   tabId: string;
 }
 
 export const Tab = ({ tabId }: TabProps) => {
+  const fullReset = useFullReset();
+  const [tabIds, setTabIds] = useAtom(tabIdsAtom);
   const [activeTabId, setActiveTabId] = useAtom(activeTabIdAtom);
-  const [contextMenuPos, setContextMenuPos] = useState<{
-    left: number;
-    top: number;
-  } | null>(null);
   const isActive = tabId === activeTabId;
   const text = useAtomValue(textFamily(tabId));
   const isNewTab = !text.length;
@@ -34,35 +34,55 @@ export const Tab = ({ tabId }: TabProps) => {
     setActiveTabId(tabId);
   }, [setActiveTabId, tabId]);
 
-  const handleOpenContextMenu: React.MouseEventHandler<HTMLButtonElement> =
-    useCallback((e) => {
-      e.preventDefault();
-      setContextMenuPos({ left: e.clientX, top: e.clientY });
-    }, []);
+  const handleDeleteTab = useCallback(() => {
+    if (isActive) {
+      const activeTabIndex = tabIds.findIndex((tid) => tabId === tid);
+      const nextTabIds = [...tabIds];
+      // Remove tab from tab ids array
+      nextTabIds.splice(activeTabIndex, 1);
+      setTabIds(nextTabIds);
 
-  const handleCloseContextMenu = useCallback(() => {
-    setContextMenuPos(null);
-  }, []);
+      // Remove tab text from tab family
+      textFamily.remove(tabId);
+
+      // Next active tab id to take if available: Next -> Prev -> Default
+      const nextActiveTabId =
+        nextTabIds[activeTabIndex] || nextTabIds[activeTabIndex - 1];
+      if (!nextActiveTabId) {
+        fullReset();
+      } else {
+        setActiveTabId(nextActiveTabId);
+      }
+    } else {
+      // Remove tab from tab ids array
+      setTabIds((prev) => prev.filter((tid) => tid !== tabId));
+
+      // Remove tab text from tab family
+      textFamily.remove(tabId);
+    }
+    logEvent(analytics, "remove_tab");
+  }, [fullReset, isActive, setActiveTabId, setTabIds, tabId, tabIds]);
 
   return (
     <>
-      <button
-        type="button"
-        className="tab"
-        data-active={isActive}
-        data-new-tab={isNewTab}
-        onClick={handleNavigateToTab}
-        onContextMenu={handleOpenContextMenu}
-      >
-        {tabDisplay}
-      </button>
-      {contextMenuPos && (
-        <TabContextMenu
-          tabId={tabId}
-          pos={contextMenuPos}
-          onClose={handleCloseContextMenu}
-        />
-      )}
+      <div className="tab-container">
+        <button
+          type="button"
+          className="tab navbar-button"
+          data-active={isActive}
+          data-new-tab={isNewTab}
+          onClick={handleNavigateToTab}
+        >
+          {tabDisplay}
+        </button>
+        <button
+          type="button"
+          className="close-tab navbar-button"
+          onClick={handleDeleteTab}
+        >
+          x
+        </button>
+      </div>
     </>
   );
 };

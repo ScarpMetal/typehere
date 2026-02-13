@@ -6,7 +6,7 @@
   opacity: 1;
   transition: opacity 0.5s;
   transition-delay: 1s;
-  background-color: #eeeeee;
+  background-color: light-dark(#eee, #111);
 
   @keyframes fade-in {
     from {
@@ -17,47 +17,47 @@
     }
   }
 
-  .tab {
-    position: relative;
-    padding: 0.3em 1em 0.4em 1em;
-    flex-shrink: 0;
-
+  .navbar-button {
+    &:hover,
     &[data-active="true"] {
-      background-color: #fff;
-    }
-
-    &[data-new-tab="true"] {
-      animation: fade-in 1s forwards;
-      color: #555;
-    }
-
-    &:hover {
-      background-color: #ccc;
+      background-color: light-dark(#fff, #222);
     }
   }
 
-  .tab-context-menu {
-    position: fixed;
-    translate: 0.1em 0.1em;
-    z-index: 10;
+  .tab-container {
+    position: relative;
+    $close-tab-size: 1em;
 
-    .tab-context-menu-item {
-      font-size: 0.7em;
-      background-color: rgb(121, 11, 11);
-      color: white;
-      padding: 0.3em 0.6em;
+    .tab {
+      position: relative;
+      padding: 0.3em 0.25em 0.4em 1em;
+      flex-shrink: 0;
+      display: flex;
+      gap: 0.25em;
+      align-items: center;
+      padding-right: $close-tab-size * 2;
+
+      &[data-new-tab="true"] {
+        animation: fade-in 1s forwards;
+      }
+    }
+
+    .close-tab {
+      position: absolute;
+      right: calc($close-tab-size / 2);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: $close-tab-size;
+      line-height: $close-tab-size;
+      padding: 0 0.25em;
+      opacity: 0.5;
     }
   }
 
   .add-tab {
-    color: #333;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 1.7em;
-
-    &:hover {
-      background-color: #ccc;
-    }
   }
 }
